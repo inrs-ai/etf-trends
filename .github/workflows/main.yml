@@ -5,7 +5,6 @@ on:
   workflow_dispatch:      # 允许手动点击按钮运行
   schedule:
     # 每天北京时间 23:00 运行
-    # GitHub 使用 UTC 时间，北京时间 23:00 = UTC 15:00
     - cron: '0 15 * * *'
 
 # 权限设置：允许写入代码仓库以发布网页
@@ -32,7 +31,7 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    # 4. 运行你的爬虫脚本
+    # 4. 运行脚本
     - name: Run script
       run: python main.py
 
