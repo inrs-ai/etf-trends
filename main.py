@@ -113,7 +113,7 @@ for url in urls:
                 try:
                     date_str = cols[0].split()[0].replace('/', '-')
                     date = datetime.strptime(date_str, '%Y-%m-%d')
-                    share = float(cols[5].replace('万', ''))
+                    share = float(cols[6].replace('万份', ''))
                     dates.append(date)
                     shares.append(share)
                 except:
