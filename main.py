@@ -1,4 +1,5 @@
 # main.py
+import zipfile
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -14,16 +15,38 @@ from datetime import datetime
 import time
 
 # ==================== 1. 环境与字体配置 ====================
-# GitHub Actions Linux环境需要加载本地字体文件
-font_path = 'SimHei.ttf'
-if os.path.exists(font_path):
-    my_font = fm.FontProperties(fname=font_path)
-    plt.rcParams['font.sans-serif'] = [my_font.get_name()]
-else:
-    # 如果本地没有字体文件（回退方案），使用默认
-    plt.rcParams['font.sans-serif'] = ['sans-serif']
-    print("警告：未找到 SimHei.ttf，中文可能乱码")
+def load_font_from_zip():
+    zip_name = 'font.zip'  # 你上传的压缩包文件名
+    # 尝试解压后的可能文件名（根据你放入压缩包的文件名决定）
+    font_files = ['msyh.ttc', 'msyh.ttf', 'simhei.ttf', 'simsun.ttc']
+    
+    # 1. 如果还没解压，先解压
+    if os.path.exists(zip_name):
+        print("发现字体压缩包，正在解压...")
+        with zipfile.ZipFile(zip_name, 'r') as zip_ref:
+            zip_ref.extractall('./')
+            
+    # 2. 寻找解压出来的字体文件
+    target_font = None
+    for f in font_files:
+        if os.path.exists(f):
+            target_font = f
+            break
+            
+    if target_font:
+        print(f"成功定位字体文件: {target_font}")
+        # 注意：对于 .ttc 文件，有时需要指定具体的索引，Matplotlib 通常会自动处理
+        return fm.FontProperties(fname=target_font)
+    else:
+        print("错误：压缩包内未找到预设的字体文件")
+        return None
 
+# 初始化
+my_font = load_font_from_zip()
+
+# 全局回退设置
+if my_font:
+    plt.rcParams['font.sans-serif'] = [my_font.get_name()]
 plt.rcParams['axes.unicode_minus'] = False
 
 # ==================== 2. ETF 列表 ====================
@@ -139,6 +162,7 @@ for idx, (code, info) in enumerate(all_data.items()):
     # 标题和标签
     title_str = f"{code} {info['name']}"
     ax.set_title(title_str, fontsize=14, fontweight='bold', fontproperties=my_font if os.path.exists(font_path) else None)
+    fontproperties=my_font)
     ax.grid(True, alpha=0.3)
     
     # 日期格式化
@@ -149,6 +173,7 @@ for idx, (code, info) in enumerate(all_data.items()):
 # 顶部大标题
 fig.suptitle(f'ETF场内份额趋势追踪 (更新时间: {datetime.now().strftime("%Y-%m-%d %H:%M")})', 
              fontsize=24, fontweight='bold', y=0.90, fontproperties=my_font if os.path.exists(font_path) else None)
+             fontproperties=my_font)
 
 # 保存图片
 img_filename = 'etf_trends.png'
