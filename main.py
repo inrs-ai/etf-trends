@@ -173,7 +173,7 @@ for idx, (code, info) in enumerate(all_data.items()):
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=30)
 
 # 顶部大标题
-fig.suptitle(f'ETF场内份额趋势追踪 (更新时间: {beijing_time_str})', 
+fig.suptitle(f'ETF场内份额趋势追踪', 
              fontsize=24, fontweight='bold', y=0.90, fontproperties=my_font)
 
 # 保存图片
